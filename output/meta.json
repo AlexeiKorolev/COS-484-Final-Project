@@ -1,0 +1,16 @@
+{
+     "byte_count": {
+          "af": 2793000000,
+          "an": 4596000000,
+          "am": 2611000000
+     },
+     "total_bytes": 10000000000,
+     "train_files": {
+          "oscar-corpus/processed/af/af_meta.txt": 75,
+          "oscar-corpus/processed/af/af_meta_truncated_2226525.txt": 1,
+          "oscar-corpus/processed/an/an_meta.txt": 417514,
+          "oscar-corpus/processed/an/an_meta_truncated_5888.txt": 1,
+          "oscar-corpus/processed/am/am_meta.txt": 5,
+          "oscar-corpus/processed/am/am_meta_truncated_46078010.txt": 1
+     }
+}

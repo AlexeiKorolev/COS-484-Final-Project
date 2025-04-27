@@ -5,10 +5,10 @@ First, download the OSCAR corpus from https://huggingface.co/datasets/oscar-corp
 import os
 from pathlib import Path
 import pandas as pd
-from utils import ensure_dir
+# from utils import ensure_dir
 
 
-corpus_dir = Path('/gscratch/scrubbed/alisaliu/oscar-corpus')
+corpus_dir = Path('../oscar-corpus')
 clean_dir = corpus_dir / 'processed'
 for d in os.listdir(corpus_dir):  # for each langauge directory
     if os.path.isdir(corpus_dir / d) and d.endswith('_meta'):
@@ -23,7 +23,12 @@ for d in os.listdir(corpus_dir):  # for each langauge directory
                 f_name = os.path.basename(file_to_process).split('.')[0]  # just the filename without extension
                 language_code = f_name.split('_')[0]
 
+                def ensure_dir(directory):
+                    if not os.path.exists(directory):
+                        os.makedirs(directory)
+                
                 ensure_dir(clean_dir / language_code)
+
                 with open(clean_dir / language_code / f'{f_name}.txt', 'w') as fo:
                     fo.write(text)
 

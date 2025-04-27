@@ -48,7 +48,7 @@ def main(experiment_dir: str, lang_code: str, corpus_dir: str, model_name: str, 
     corpus_dir = Path(corpus_dir)
     experiment_dir = Path(experiment_dir)
     lang_dir = lang_code if num_bytes == DEFAULT_NUM_BYTES else f'{lang_code}/{"{:.0e}".format(num_bytes).replace("e+", "e")}'
-    os.chdir('/gscratch/xlab/alisaliu/hack-tokenizers')
+    os.chdir('hacked-tokenizer')
 
     print(f'We will dump frequencies in {experiment_dir}/{lang_dir}...')
 
