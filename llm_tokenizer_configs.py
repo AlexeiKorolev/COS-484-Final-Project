@@ -51,6 +51,32 @@ LLM_PRETOKENIZERS = {
         ),
         ByteLevel(add_prefix_space=False, trim_offsets=True, use_regex=False),
     ]),
+    'R1': pre_tokenizers.Sequence([
+        Split(
+            pattern=Regex("(?i:'s|'t|'re|'ve|'m|'ll|'d)|[^\\r\\n\\p{L}\\p{N}]?\\p{L}+|\\p{N}{1,3}| ?[^\\s\\p{L}\\p{N}]+[\\r\\n]*|\\s*[\\r\\n]+|\\s+(?!\\S)|\\s+"),
+            behavior='isolated',
+            invert=False
+        ),
+        ByteLevel(add_prefix_space=False, trim_offsets=True, use_regex=False)
+    ]),
+    'V3': pre_tokenizers.Sequence([
+        Split(
+            pattern=Regex(r"\p{N}{1,3}"),
+            behavior='isolated',
+            invert=False
+        ),
+        Split(
+            pattern=Regex(r"[一-龥぀-ゟ゠-ヿ]+"),
+            behavior='isolated',
+            invert=False
+        ),
+        Split(
+            pattern=Regex(r"[!\"#$%&'()*+,\-./:;<=>?@\[\\\]^_`{|}~][A-Za-z]+|[^\r\n\p{L}\p{P}\p{S}]?[\p{L}\p{M}]+| ?[\p{P}\p{S}]+[\r\n]*|\s*[\r\n]+|\s+(?!\S)|\s+"),
+            behavior='isolated',
+            invert=False
+        ),
+        ByteLevel(add_prefix_space=False, trim_offsets=True, use_regex=False)
+    ]),
     'gemma': pre_tokenizers.Sequence([
         Split(
             pattern=Regex(" ?[^\\s\\p{L}\\p{N}]+\\r*"),

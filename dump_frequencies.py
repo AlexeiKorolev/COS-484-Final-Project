@@ -45,6 +45,10 @@ DEFAULT_NUM_BYTES = 10**9
     default=DEFAULT_NUM_BYTES
 )
 def main(experiment_dir: str, lang_code: str, corpus_dir: str, model_name: str, num_bytes: int):
+    print(f"experiment_dir: {experiment_dir}")
+    print(f"corpus_dir: {corpus_dir}")
+    print(f"model_name: {model_name}")
+    print(f"num_bytes: {num_bytes}")
     corpus_dir = Path(corpus_dir)
     experiment_dir = Path(experiment_dir)
     lang_dir = lang_code if num_bytes == DEFAULT_NUM_BYTES else f'{lang_code}/{"{:.0e}".format(num_bytes).replace("e+", "e")}'
@@ -73,8 +77,13 @@ def main(experiment_dir: str, lang_code: str, corpus_dir: str, model_name: str, 
             byte_count += filesize
         else:
             wanted_filesize = num_bytes - byte_count
+            fname = fname.split('/')[-1] # my fix to the file does not exist error.
+
             trunc_fname = f'{fname[:-4]}_truncated_{wanted_filesize}.txt'
-            os.system(f'cp {corpus_dir / lang_code / fname} {corpus_dir / lang_code / trunc_fname}')
+
+
+            print(f"cp {corpus_dir}/{lang_code}/{fname} {corpus_dir}/{lang_code}/{trunc_fname}")
+            os.system(f'cp "{corpus_dir}/{lang_code}/{fname}" "{corpus_dir}/{lang_code}/{trunc_fname}"')
             truncate_file(corpus_dir / lang_code / trunc_fname, wanted_filesize)
             text_files.append(str(corpus_dir / lang_code / trunc_fname))
             byte_count += wanted_filesize

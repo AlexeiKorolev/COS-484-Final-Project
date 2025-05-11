@@ -1,3 +1,9 @@
 push_oscar.slurm
 slurm-*
 oscar-corpus/*
+small_oscar/*
+oscar_dataset/*
+redpajama_dataset/*
+experiments/*
+__pycache__/*
+output/*

@@ -1,15 +1,37 @@
 from datasets import load_dataset
+import os
 
+# List only the most relevant languages you want
+relevant_languages = ['en', 'fr', 'es', 'de', 'zh']  # Example: English, French, Spanish, German, Chinese
+cyrilic_languages = ['ru', 'uk', 'bg', 'sr']  # Added Russian, Ukrainian, Bulgarian, Serbian
+east_asian_languages = ['ja', 'ko']  # Japanese, Korean, Chinese (already have that)
+south_asian_languages = ['hi', 'bn', 'ta', 'te', 'ur']  # Hindi, Bengali, Tamil, Telugu, Urdu
 
-options = ['af', 'am', 'an', 'ar', 'arz', 'as', 'ast', 'av', 'az', 'azb', 'ba', 'be', 'bg', 'bh', 'bn', 'bo', 'bpy', 'br', 'bs', 'bxr', 'ca', 'ce', 'ceb', 'ckb', 'cs', 'cv', 'cy', 'da', 'de', 'dsb', 'dv', 'el', 'en', 'eo', 'es', 'et', 'eu', 'fa', 'fi', 'fr', 'fy', 'ga', 'gd', 'gl', 'gn', 'gom', 'gsw', 'gu', 'he', 'hi', 'hr', 'hsb', 'ht', 'hu', 'hy', 'ia', 'id', 'ie', 'ilo', 'io', 'is', 'it', 'ja', 'jbo', 'jv', 'ka', 'kk', 'km', 'kn', 'ko', 'krc', 'ku', 'kv', 'kw', 'ky', 'la', 'lb', 'lez', 'li', 'lmo', 'lo', 'lt', 'lv', 'mai', 'mg', 'mhr', 'min', 'mk', 'ml', 'mn', 'mr', 'mrj', 'ms', 'mt', 'multi', 'mwl', 'my', 'mzn', 'nah', 'nds', 'ne', 'new', 'nl', 'nn', 'no', 'oc', 'or', 'os', 'pa', 'pl', 'pms', 'pnb', 'ps', 'pt', 'qu', 'ro', 'ru', 'sa', 'sah', 'sd', 'sh', 'si', 'sk', 'sl', 'so', 'sq', 'sr', 'su', 'sv', 'sw', 'ta', 'te', 'tg', 'th', 'tk', 'tl', 'tr', 'tt', 'ug', 'uk', 'ur', 'uz', 'vi', 'vo', 'wa', 'war', 'wuu', 'x-eml', 'xal', 'xmf', 'yi', 'yo', 'zh']
+languages_to_download = ['en', 'ru', 'zh']# ['ja'] # ['ja', 'ta','te'] # ['zh'] #cyrilic_languages + east_asian_languages + south_asian_languages
 
-# Download the OSCAR-2301 dataset
-def download_oscar_dataset(option):
-    dataset = load_dataset("oscar-corpus/OSCAR-2301", option, split="all")
-    return dataset
+TARGET_BYTES = int(0.1 * 1024 * 1024 * 1024)  # 1GB
+
+def download_1gb_oscar(option):
+    dataset = load_dataset("oscar-corpus/OSCAR-2301", option, split="train", streaming=True)
+    os.makedirs(f"./small_oscar/{option}", exist_ok=True)
+    out_path = f"./small_oscar/{option}/{option}_meta.txt"
+    total_bytes = 0
+    with open(out_path, "w", encoding="utf-8") as f:
+        for sample in dataset:
+            text = sample.get("text") or sample.get("content")
+            if not text:
+                continue
+            encoded = text + "\n"
+            encoded_bytes = encoded.encode("utf-8")
+            if total_bytes + len(encoded_bytes) > TARGET_BYTES:
+                # Only write up to the target size
+                remaining = TARGET_BYTES - total_bytes
+                f.write(encoded_bytes[:remaining].decode("utf-8", errors="ignore"))
+                break
+            f.write(encoded)
+            total_bytes += len(encoded_bytes)
+    print(f"Downloaded {total_bytes / (1024*1024):.2f} MB for {option}")
 
 if __name__ == "__main__":
-    for option in options:
-        oscar_dataset = download_oscar_dataset(option)
-        oscar_dataset.save_to_disk(f"./oscar_dataset/{option}")
-        print("Dataset downloaded and saved successfully!")
+    for option in languages_to_download:
+        download_1gb_oscar(option)
